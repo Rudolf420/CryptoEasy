@@ -9,7 +9,7 @@ from django.db import models
 
 
 class PersonalInfo(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING, db_column='user', blank=True, null=True)
+    user = models.IntegerField(blank=True, null=True)
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
     card_id = models.CharField(unique=True, max_length=255)
@@ -22,7 +22,7 @@ class PersonalInfo(models.Model):
     last_update = models.DateTimeField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Personal_info'
 
 
@@ -34,12 +34,12 @@ class User(models.Model):
     token = models.CharField(max_length=255)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'User'
 
 
 class Wallet(models.Model):
-    user = models.OneToOneField(User, models.DO_NOTHING, db_column='user')
+    user = models.IntegerField(blank=True, null=True)
     eur_balance = models.FloatField(blank=True, null=True)
     bitcoin_balance = models.FloatField(blank=True, null=True)
     ethereum_balance = models.FloatField(blank=True, null=True)
@@ -50,5 +50,5 @@ class Wallet(models.Model):
     last_update = models.DateTimeField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Wallet'
