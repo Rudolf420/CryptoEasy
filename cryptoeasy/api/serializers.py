@@ -1,6 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from .models import User, PersonalInfo, Wallet
+from .models import User, PersonalInfo, Wallet, Cryptodetail
 import datetime
 from django.utils import timezone
 
@@ -92,3 +92,20 @@ class WalletSerializer(serializers.Serializer):
             return instance
 
         return User(**attrs)
+
+class CryptodetailSerializer(serializers.Serializer):
+    api_response = serializers.JSONField()
+    last_update = serializers.DateTimeField()
+
+    def create(self, validated_data):
+        return Cryptodetail.objects.create(**validated_data)
+
+    def restore_object(self, attrs, instance=None):
+
+        if instance is not None:
+            instance.api_response = attrs.get('api_response', instance.api_response)
+            instance.last_update = attrs.get('last_update', instance.last_update)
+
+            return instance
+
+        return Cryptodetail(**attrs)

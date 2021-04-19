@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.utils.crypto import get_random_string
 from io import BytesIO
 from rest_framework.parsers import JSONParser
-from .models import User, PersonalInfo, Wallet
-from .serializers import UserSerializer, PersonalInfoSerializer, WalletSerializer
+from .models import User, PersonalInfo, Wallet, Cryptodetail
+from .serializers import UserSerializer, PersonalInfoSerializer, WalletSerializer, CryptodetailSerializer
 import requests
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from django.views.decorators.csrf import csrf_exempt
@@ -259,6 +259,27 @@ def info(request):
 
             return JsonResponse({'User':UserSerializer(user).data, 'PersonalInfo':PersonalInfoSerializer(personal_info).data,'Wallet':WalletSerializer(wallet).data}, status=200)
 
+@csrf_exempt
+def cryptodetail(request):
+    if request.method == 'GET':
+
+        if(Cryptodetail.objects.get(id=1).last_update < datetime.datetime.now() - datetime.timedelta(minutes=5) ):
+            headers = {"X-CMC_PRO_API_KEY": "89491b09-0f1e-4585-80cf-a13097fdc682"}
+            response = requests.get(
+                "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=BTC,ETH,LTC,ADA,DOT&convert=EUR",
+                headers=headers)
+            json = BytesIO(response.content)
+            data = JSONParser().parse(json)
+
+            detail = Cryptodetail.objects.get(id=1)
+            detail.api_response = data['data']
+            detail.last_update = datetime.datetime.now()
+            detail.save()
+            return JsonResponse(CryptodetailSerializer(detail).data, status=200)
+
+        else:
+            detail = Cryptodetail.objects.get(id=1)
+            return JsonResponse(CryptodetailSerializer(detail).data, status=200)
 
 def user_exists(email):
     if User.objects.filter(email=email).exists():

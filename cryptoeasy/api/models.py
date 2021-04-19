@@ -52,3 +52,11 @@ class Wallet(models.Model):
     class Meta:
         managed = False
         db_table = 'Wallet'
+
+class Cryptodetail(models.Model):
+    api_response = models.JSONField()
+    last_update = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'CryptoDetail'
