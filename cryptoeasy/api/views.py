@@ -24,17 +24,18 @@ def register(request):
 
         json = BytesIO(request.body)
         data = JSONParser().parse(json)
+        print(data['photo'])
         data.update({'created_at': datetime.datetime.now(tz=timezone.utc), 'last_update': datetime.datetime.now(tz=timezone.utc), 'last_login': datetime.datetime.now(tz=timezone.utc), 'token':generate_key()})
         user = UserSerializer(data=data)
 
         if user.is_valid():
 
             if user_exists(data["email"]):
-                response = {'Failed': 'email is already used'}
+                response = {'response': 'email is already used'}
                 return JsonResponse(response, status=409)
 
             elif card_exists(data["card_id"]):
-                response = {'Failed': 'card id is already used'}
+                response = {'response': 'card id is already used'}
                 return JsonResponse(response, status=409)
 
             else:
@@ -256,7 +257,7 @@ def info(request):
             except PersonalInfo.DoesNotExist:
                 return JsonResponse({'response':'PersonalInfo doesnt exist'}, status=400)
 
-
+            print(PersonalInfoSerializer(personal_info).data)
             return JsonResponse({'User':UserSerializer(user).data, 'PersonalInfo':PersonalInfoSerializer(personal_info).data,'Wallet':WalletSerializer(wallet).data}, status=200)
 
 @csrf_exempt

@@ -16,7 +16,7 @@ class PersonalInfo(models.Model):
     street = models.CharField(max_length=255)
     postal_code = models.IntegerField()
     city = models.CharField(max_length=255)
-    photo = models.BinaryField(blank=True, null=True)
+    photo = models.CharField(blank=True, null=True, max_length=100000000)
     debet_card_number = models.CharField(max_length=16)
     created_at = models.DateTimeField()
     last_update = models.DateTimeField()
